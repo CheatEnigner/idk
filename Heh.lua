@@ -1,151 +1,209 @@
--- Instances:
-local ScreenGui = Instance.new("ScreenGui")
-local Frame = Instance.new("Frame")
-local UICorner = Instance.new("UICorner")
-local AimText = Instance.new("TextLabel")
-local AimButton = Instance.new("TextButton")
-local UICorner_2 = Instance.new("UICorner")
-local MadeBy = Instance.new("TextLabel")
-local PlayerCount = Instance.new("TextLabel")
-local UICorner_3 = Instance.new("UICorner")
-
--- Properties:
-ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-
-Frame.Name = "AimFrame"
-Frame.Parent = ScreenGui
-Frame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Frame.BorderSizePixel = 0
-Frame.Position = UDim2.new(0.390139997, 0, 0.307328612, 0)
-Frame.Size = UDim2.new(0, 360, 0, 326)
-
-UICorner.Parent = Frame
-
-AimText.Name = "AimText"
-AimText.Parent = Frame
-AimText.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-AimText.BorderColor3 = Color3.fromRGB(170, 0, 0)
-AimText.BorderSizePixel = 0
-AimText.Size = UDim2.new(0, 360, 0, 44)
-AimText.Font = Enum.Font.Bangers
-AimText.Text = "Aiming System"
-AimText.TextColor3 = Color3.fromRGB(170, 0, 0)
-AimText.TextSize = 35.000
-
-AimButton.Name = "AimButton"
-AimButton.Parent = Frame
-AimButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-AimButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
-AimButton.BorderSizePixel = 0
-AimButton.Position = UDim2.new(0.222222224, 0, 0.205521479, 0)
-AimButton.Size = UDim2.new(0, 213, 0, 79)
-AimButton.Font = Enum.Font.Bangers
-AimButton.Text = "Enable Aim"
-AimButton.TextColor3 = Color3.fromRGB(170, 0, 0)
-AimButton.TextSize = 30.000
-AimButton.TextStrokeTransparency = 0.000
-
-UICorner_2.Parent = AimButton
-
-MadeBy.Name = "Made By"
-MadeBy.Parent = Frame
-MadeBy.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-MadeBy.BackgroundTransparency = 1.000
-MadeBy.BorderColor3 = Color3.fromRGB(0, 0, 0)
-MadeBy.BorderSizePixel = 0
-MadeBy.Position = UDim2.new(0, 0, 0.846625745, 0)
-MadeBy.Size = UDim2.new(0, 360, 0, 50)
-MadeBy.Font = Enum.Font.Bangers
-MadeBy.Text = "Press 'B' to Toggle"
-MadeBy.TextColor3 = Color3.fromRGB(170, 0, 0)
-MadeBy.TextSize = 30.000
-
-PlayerCount.Name = "PlayerCount"
-PlayerCount.Parent = Frame
-PlayerCount.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-PlayerCount.BorderColor3 = Color3.fromRGB(0, 0, 0)
-PlayerCount.BorderSizePixel = 0
-PlayerCount.Position = UDim2.new(0.222222224, 0, 0.604294479, 0)
-PlayerCount.Size = UDim2.new(0, 213, 0, 79)
-PlayerCount.Font = Enum.Font.Bangers
-PlayerCount.Text = "Player Count:"
-PlayerCount.TextColor3 = Color3.fromRGB(170, 0, 0)
-PlayerCount.TextSize = 27.000
-
-UICorner_3.Parent = PlayerCount
-
--- Player Count Update Script
-local function updatePlayerCount()
-    local players = game.Players:GetPlayers()
-    PlayerCount.Text = "Player Count: " .. #players
-end
-
-updatePlayerCount()
-game.Players.PlayerAdded:Connect(updatePlayerCount)
-game.Players.PlayerRemoving:Connect(updatePlayerCount)
-
--- Toggle UI Script
-local UserInputService = game:GetService("UserInputService")
-local aimEnabled = false
-
-UserInputService.InputBegan:Connect(function(input)
-    if input.KeyCode == Enum.KeyCode.B then
-        aimEnabled = not aimEnabled
-        Frame.Visible = aimEnabled
-    end
-end)
-
--- Aim Functionality
-AimButton.MouseButton1Click:Connect(function()
-    local localPlayer = game.Players.LocalPlayer
-    local mouse = localPlayer:GetMouse()
-
-    -- Function to find the closest player
-    local function getClosestPlayer()
-        local closestPlayer = nil
-        local closestDistance = math.huge
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+local Window = OrionLib:MakeWindow({Name = "Meh Hub", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+ 
+--[[
+Name = <string> - The name of the UI.
+HidePremium = <bool> - Whether or not the user details shows Premium status or not.
+SaveConfig = <bool> - Toggles the config saving in the UI.
+ConfigFolder = <string> - The name of the folder where the configs are saved.
+IntroEnabled = <bool> - Whether or not to show the intro animation.
+IntroText = <string> - Text to show in the intro animation.
+IntroIcon = <string> - URL to the image you want to use in the intro animation.
+Icon = <string> - URL to the image you want displayed on the window.
+CloseCallback = <function> - Function to execute when the window is closed.
+    ]]
+    local Tab = Window:MakeTab({
+    Name = "All",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+    })
+    
+    --[[
+    Name = <string> - The name of the tab.
+    Icon = <string> - The icon of the tab.
+    PremiumOnly = <bool> - Makes the tab accessible to Sirus Premium users only.
+    ]]
+    local Section = Tab:AddSection({
+    Name = "Section"
+    })
+    
+    --[[
+    Name = <string> - The name of the section.
+    ]]
+    Tab:AddButton({
+    Name = "SoftAim",
+    Callback = function()
+        --// Services
         
-        for _, player in ipairs(game.Players:GetPlayers()) do
-            if player ~= localPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                local distance = (player.Character.HumanoidRootPart.Position - localPlayer.Character.HumanoidRootPart.Position).Magnitude
-                if distance < closestDistance then
-                    closestDistance = distance
-                    closestPlayer = player
+        local Players = game:GetService("Players")
+        local UserInputService = game:GetService("UserInputService")
+        local ReplicatedStorage = game:GetService("ReplicatedStorage")
+        
+        --// Shortcuts
+        
+        local Camera = workspace.CurrentCamera
+        local LocalPlayer = Players.LocalPlayer
+        
+        --// Variables
+        
+        local OldNameCall = nil
+        
+        --// Settings
+        
+        getgenv().SilentAimEnabled = true
+        
+        --// Functions
+        
+        local function GetClosestPlayer()
+            local MaximumDistance = math.huge
+            local Target
+            
+            local Thread = coroutine.wrap(function()
+                wait(20)
+                MaximumDistance = math.huge
+            end)
+            
+            Thread()
+            
+            for _, v in next, Players:GetPlayers() do
+                if v.Name ~= LocalPlayer.Name then
+                    if v.TeamColor ~= LocalPlayer.TeamColor then
+                        if workspace:FindFirstChild(v.Name) ~= nil then
+                            if workspace[v.Name]:FindFirstChild("HumanoidRootPart") ~= nil then
+                                if workspace[v.Name]:FindFirstChild("Humanoid") ~= nil and workspace[v.Name]:FindFirstChild("Humanoid").Health ~= 0 then
+                                    local ScreenPoint = Camera:WorldToScreenPoint(workspace[v.Name]:WaitForChild("HumanoidRootPart", math.huge).Position)
+                                    local VectorDistance = (Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y) - Vector2.new(ScreenPoint.X, ScreenPoint.Y)).Magnitude
+                                    
+                                    if VectorDistance < MaximumDistance then
+                                        Target = v
+                                        MaximumDistance = VectorDistance
+                                    end
+                                end
+                            end
+                        end
+                    end
                 end
             end
-        end
-
-        return closestPlayer
-    end
-
-    -- Function to highlight the target
-    local function highlightTarget()
-        local targetPlayer = getClosestPlayer()
-        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            -- Create a simple part to represent the aim
-            local targetPart = Instance.new("Part")
-            targetPart.Size = Vector3.new(1, 1, 1)
-            targetPart.Position = targetPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 3, 0) -- Position above the target
-            targetPart.Anchored = true
-            targetPart.CanCollide = false
-            targetPart.BrickColor = BrickColor.new("Bright red")
-            targetPart.Transparency = 0.5
-            targetPart.Parent = workspace
             
-            -- Keep updating the target's position
-            local updateConnection = game:GetService("RunService").RenderStepped:Connect(function()
-                if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    targetPart.Position = targetPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 3, 0)
-                else
-                    targetPart:Destroy()
-                    updateConnection:Disconnect()
-                end
-            end)
+            return Target
         end
-    end
-
-    -- Call highlight target function
-    highlightTarget()
-end)
+        
+        --// Silent Aim
+        
+        OldNameCall = hookmetamethod(game, "__namecall", function(Self, ...)
+            local NameCallMethod = getnamecallmethod()
+            local Arguments = {...}
+            
+            if not checkcaller() and tostring(Self) == "HitPart" and tostring(NameCallMethod) == "FireServer" then
+                if getgenv().SilentAimEnabled == true then
+                    Arguments[1] = GetClosestPlayer().Character.Hitbox
+                end
+                
+                return Self.FireServer(Self, unpack(Arguments))
+            elseif not checkcaller() and tostring(Self) == "Trail" and tostring(NameCallMethod) == "FireServer" then
+                if getgenv().SilentAimEnabled == true then
+                    if type(Arguments[1][5]) == "string" then
+                        Arguments[1][6] = GetClosestPlayer().Character.Hitbox
+                        Arguments[1][2] = GetClosestPlayer().Character.Hitbox.Position
+                    end
+                end
+                
+                return Self.FireServer(Self, unpack(Arguments))
+            elseif not checkcaller() and tostring(Self) == "CreateProjectile" and tostring(NameCallMethod) == "FireServer" then    
+                if getgenv().SilentAimEnabled == true then
+                    Arguments[18] = GetClosestPlayer().Character.Hitbox
+                    Arguments[19] = GetClosestPlayer().Character.Hitbox.Position
+                    Arguments[17] = GetClosestPlayer().Character.Hitbox.Position
+                    Arguments[4] = GetClosestPlayer().Character.Hitbox.CFrame
+                    Arguments[10] = GetClosestPlayer().Character.Hitbox.Position
+                    Arguments[3] = GetClosestPlayer().Character.Hitbox.Position
+                end
+                
+                return Self.FireServer(Self, unpack(Arguments))
+            elseif not checkcaller() and tostring(Self) == "Flames" and tostring(NameCallMethod) == "FireServer" then -- DOESNT WORK
+                if getgenv().SilentAimEnabled == true then
+                    Arguments[1] = GetClosestPlayer().Character.Hitbox.CFrame
+                    Arguments[2] = GetClosestPlayer().Character.Hitbox.Position
+                    Arguments[5] = GetClosestPlayer().Character.Hitbox.Position
+                end
+                
+                return Self.FireServer(Self, unpack(Arguments))
+            elseif not checkcaller() and tostring(Self) == "Fire" and tostring(NameCallMethod) == "FireServer" then
+                if getgenv().SilentAimEnabled == true then
+                    Arguments[1] = GetClosestPlayer().Character.Hitbox.Position
+                end
+                
+                return Self.FireServer(Self, unpack(Arguments))
+            elseif not checkcaller() and tostring(Self) == "ReplicateProjectile" and tostring(NameCallMethod) == "FireServer" then
+                if getgenv().SilentAimEnabled == true then
+                    Arguments[1][3] = GetClosestPlayer().Character.Hitbox.Position
+                    Arguments[1][4] = GetClosestPlayer().Character.Hitbox.Position
+                    Arguments[1][10] = GetClosestPlayer().Character.Hitbox.Position
+                end
+                
+                return Self.FireServer(Self, unpack(Arguments))
+            elseif not checkcaller() and tostring(Self) == "RemoteEvent" and tostring(NameCallMethod) == "FireServer" then
+                if getgenv().SilentAimEnabled == true then
+                    if Arguments[1][1] == "createparticle" and Arguments[1][2] == "muzzle" then
+                        if Arguments[3] == LocalPlayer.Character.Gun then
+                            if ReplicatedStorage.Weapons(LocalPlayer.Character.Gun.Boop.Value).Melee then
+                                local KnifeArguments1 = {
+                                [1] = "createparticle",
+                                [2] = "bullethole",
+                                [3] = GetClosestPlayer().Character.Hitbox,
+                                [4] = GetClosestPlayer().Character.Hitbox.Position,
+                                [5] = Vector3.new(0, 0, 0),
+                                [6] = ReplicatedStorage.Weapons:FindFirstChild(LocalPlayer.Character.Gun.Boop.Value),
+                                [7] = false,
+                                [8] = GetClosestPlayer().Character.Hitbox.Position,
+                                [9] = true,
+                                [12] = LocalPlayer,
+                                [13] = 1
+                                }
+                                
+                                local KnifeArguments = {
+                                GetClosestPlayer().Character.Hitbox,
+                                GetClosestPlayer().Character.Hitbox.Position,
+                                ReplicatedStorage.Weapons:FindFirstChild(LocalPlayer.Character.EquippedTool.Value).Name,
+                                1,
+                                5,
+                                false,
+                                false,
+                                false,
+                                1,
+                                false,
+                                ReplicatedStorage.Weapons:FindFirstChild(LocalPlayer.Character.EquippedTool.Value).FireRate.Value,
+                                ReplicatedStorage.Weapons:FindFirstChild(LocalPlayer.Character.EquippedTool.Value).ReloadTime.Value,
+                                ReplicatedStorage.Weapons:FindFirstChild(LocalPlayer.Character.EquippedTool.Value).Ammo.Value,
+                                ReplicatedStorage.Weapons:FindFirstChild(LocalPlayer.Character.EquippedTool.Value).StoredAmmo.Value,
+                                ReplicatedStorage.Weapons:FindFirstChild(LocalPlayer.Character.EquippedTool.Value).Bullets.Value,
+                                ReplicatedStorage.Weapons:FindFirstChild(LocalPlayer.Character.EquippedTool.Value).EquipTime.Value,
+                                ReplicatedStorage.Weapons:FindFirstChild(LocalPlayer.Character.EquippedTool.Value).RecoilControl.Value,
+                                ReplicatedStorage.Weapons:FindFirstChild(LocalPlayer.Character.EquippedTool.Value).Auto.Value,
+                                ReplicatedStorage.Weapons:FindFirstChild(LocalPlayer.Character.EquippedTool.Value)["Speed%"].Value,
+                                ReplicatedStorage:WaitForChild("wkspc").DistributedTime.Value,
+                                215,
+                                1,
+                                false,
+                                true
+                                }
+                                
+                                ReplicatedStorage.Events.RemoteEvent:FireServer(KnifeArguments1)
+                                ReplicatedStorage.Events.HitPart:FireServer(unpack(KnifeArguments))
+                            end
+                        end
+                    end
+                end
+                
+                return Self.FireServer(Self, unpack(Arguments))
+            end
+            
+            return OldNameCall(Self, ...)
+        end)
+    end    
+    })
+    
+    --[[
+    Name = <string> - The name of the button.
+    Callback = <function> - The function of the button.
+        ]]
